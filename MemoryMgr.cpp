@@ -126,14 +126,17 @@ void MemoryAlloc::initMemory()
 
 MemoryMgr::MemoryMgr()
 {
-	init(0, 64, &_mem64);
+	init_szAlloc(0, 64, &_mem64);
+	init_szAlloc(65, 128, &_mem128);
+	init_szAlloc(129, 512, &_mem512);
+	init_szAlloc(513, 1024, &_mem1024);
 }
 
 MemoryMgr::~MemoryMgr()
 {
 }
 
-void MemoryMgr::init(int nBegin, int nEnd, MemoryAlloc* pMemA)
+void MemoryMgr::init_szAlloc(int nBegin, int nEnd, MemoryAlloc* pMemA)
 {
 	for (int i = nBegin; i <= nEnd; i++)
 	{

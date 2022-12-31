@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 
-#define MAX_MEMORY_SIZE 64
+#define MAX_MEMORY_SIZE 1024
 
 class MemoryAlloc;
 //内存块
@@ -79,7 +79,7 @@ private:
 	~MemoryMgr();
 private:
 	//初始化内存池映射数组
-	void init(int nBegin, int nEnd, MemoryAlloc* pMemA);
+	void init_szAlloc(int nBegin, int nEnd, MemoryAlloc* pMemA);
 
 public:
 	static MemoryMgr& Instance();
@@ -93,7 +93,11 @@ public:
 	//增加内存池的引用计数
 	void addRef(void* pMem);
 private:
-	MemoryAlloctor<MAX_MEMORY_SIZE,10> _mem64;
+	MemoryAlloctor<64,1000000> _mem64;
+	MemoryAlloctor<128, 1000000> _mem128;
+	MemoryAlloctor<256, 1000000> _mem256;
+	MemoryAlloctor<512, 1000000> _mem512;
+	MemoryAlloctor<1024, 1000000> _mem1024;
 	MemoryAlloc* _szAlloc[MAX_MEMORY_SIZE + 1];
 
 };

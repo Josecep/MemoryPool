@@ -18,12 +18,12 @@ int main()
 	//char* data3 = new char[64];
 	//delete[] data3;
 
-	char* data[12];
-	for (size_t i = 0; i < 12; i++)
+	char* data[1100];
+	for (size_t i = 0; i < 1100; i++)
 	{
-		data[i] = new char[60];
+		data[i] = new char[1+i];
 	}
-	for (size_t i = 0; i < 12; i++)
+	for (size_t i = 0; i < 1100; i++)
 	{
 		delete[]  data[i] ;
 	}
