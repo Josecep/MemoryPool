@@ -1,7 +1,6 @@
 #include "MemoryMgr.h"
 #include <assert.h>
 
-
 #ifdef _DEBUG
 #include <cstdio>
 	#define xPrintf(...) printf(__VA_ARGS__)
@@ -24,6 +23,7 @@ MemoryAlloc::MemoryAlloc()
 	_pHeader = nullptr;
 	_nSize = 0;
 	_nBlockSize = 0;
+	xPrintf("MemoryAlloc\n");
 }
 
 MemoryAlloc::~MemoryAlloc()
@@ -36,11 +36,13 @@ MemoryAlloc::~MemoryAlloc()
 
 void* MemoryAlloc::allocMemory(size_t nSize)
 {
+	std::lock_guard<std::mutex> lg(_mutex);
 	if (!_pBuf)
 	{
 		initMemory();
 	}
 
+	
 	MemoryBlock* pReturn = nullptr;
 	if (!_pHeader)
 	{
@@ -70,15 +72,21 @@ void MemoryAlloc::freeMemory(void* pMem)
 	xPrintf("freeMemory: %llx,id=%d\n", pBlock, pBlock->nID);
 	assert(1 == pBlock->nRef);
 
-	if (--pBlock->nRef != 0)
-	{
-		return;
-	}
 	if (pBlock->bPool)
 	{
+		std::lock_guard<std::mutex> lg(_mutex);
+
+		if (--pBlock->nRef != 0)
+		{
+			return;
+		}
 		pBlock->pNext = _pHeader;
 		_pHeader = pBlock;
 	}else{
+		if (--pBlock->nRef != 0)
+		{
+			return;
+		}
 		free(pBlock);
 	}
 
@@ -86,6 +94,7 @@ void MemoryAlloc::freeMemory(void* pMem)
 
 void MemoryAlloc::initMemory()
 {
+	xPrintf("InitMemory,_nSize:%d ,_nBlockSize:%d \n",_nSize,_nBlockSize);
 	//╤оят
 	assert(nullptr == _pBuf);
 
@@ -130,6 +139,7 @@ MemoryMgr::MemoryMgr()
 	init_szAlloc(65, 128, &_mem128);
 	init_szAlloc(129, 512, &_mem512);
 	init_szAlloc(513, 1024, &_mem1024);
+	xPrintf("MemoryMgr\n");
 }
 
 MemoryMgr::~MemoryMgr()

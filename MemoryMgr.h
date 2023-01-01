@@ -1,7 +1,7 @@
 #ifndef _MEMORY_MGR_H_
 #define _MEMORY_MGR_H_
 #include <cstdlib>
-
+#include <mutex>
 
 #define MAX_MEMORY_SIZE 1024
 
@@ -61,6 +61,8 @@ protected:
 	size_t _nSize;
 	//内存单元的数量
 	size_t _nBlockSize;
+
+	std::mutex _mutex;
 };
 
 //便于声明成员变量时初始化MemoryAlloc
